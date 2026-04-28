@@ -8,9 +8,6 @@ export class User {
 
   constructor(props: Omit<User, "id">, id?: string) {
     Object.assign(this, props);
-
-    if (!id) {
-      this.id = v4();
-    }
+    this.id = id ?? v4();
   }
 }
