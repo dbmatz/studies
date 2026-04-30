@@ -1,5 +1,6 @@
 import { IUserRepository } from "../repositories/IUserRepository";
 import { User } from "../../domain/entities/User";
+import { IHashService } from "../services/IHashService";
 export interface CreateUserInput {
   name: string;
   email: string;
@@ -11,7 +12,10 @@ export interface ICreateUserUseCase {
 }
 
 export class CreateUserUseCase implements ICreateUserUseCase {
-  constructor(private readonly userRepository: IUserRepository) {}
+  constructor(
+    private readonly userRepository: IUserRepository,
+    private readonly hashService: IHashService,
+  ) {}
 
   async execute(dto: CreateUserInput): Promise<User> {
     const { email, name, password } = dto;
@@ -23,7 +27,8 @@ export class CreateUserUseCase implements ICreateUserUseCase {
       throw new Error("Email is already in use.");
     }
 
-    const user = new User({ email, name, password });
+    const hashedPassword = await this.hashService.hash(password)
+    const user = new User({ email, name, password: hashedPassword });
     await this.userRepository.save(user);
     return user;
   }
