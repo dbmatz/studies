@@ -17,6 +17,7 @@
     "rootDir": "./src",
     "noEmit": true,
     "allowImportingTsExtensions": true,
+    "types": ["jest"]
     // "baseUrl": "./",
   },
   "include": [
