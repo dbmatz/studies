@@ -3,6 +3,8 @@ import { User } from "../../domain/entities/User";
 import { IHashService } from "../services/IHashService";
 import { UserDTO } from "../dtos/UserDTO";
 import { UserMapper } from "../mappers/UserMapper";
+import { ConflictError } from "../errors/ConflictError";
+import { BadRequestError } from "../errors/BadRequestError";
 export interface CreateUserInput {
   name: string;
   email: string;
@@ -22,14 +24,14 @@ export class CreateUserUseCase implements ICreateUserUseCase {
   async execute(dto: CreateUserInput): Promise<UserDTO> {
     const { email, name, password } = dto;
     if (!email || !name || !password) {
-      throw new Error("Please provide the required information.");
+      throw new BadRequestError("Please provide the required information.");
     }
     const uniqueEmail = await this.userRepository.findByEmail(email);
     if (uniqueEmail) {
-      throw new Error("Email is already in use.");
+      throw new ConflictError("Email is already in use.");
     }
 
-    const hashedPassword = await this.hashService.hash(password)
+    const hashedPassword = await this.hashService.hash(password);
     const user = new User({ email, name, password: hashedPassword });
     await this.userRepository.save(user);
     return UserMapper.toDto(user);
