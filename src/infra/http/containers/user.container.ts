@@ -3,7 +3,7 @@ import { InMemoryUserRepository } from "../../repositories/InMemoryUserRepositor
 import { BcryptHashService } from "../../services/BcryptHashService";
 import { UserController } from "../controllers/UserController";
 
-const inMemoryUserRepository = new InMemoryUserRepository();
+export const inMemoryUserRepository = new InMemoryUserRepository();
 const bcryptHashService = new BcryptHashService();
 const createUserUseCase = new CreateUserUseCase(
   inMemoryUserRepository,

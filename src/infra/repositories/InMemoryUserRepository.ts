@@ -4,6 +4,10 @@ import { User } from "../../domain/entities/User";
 export class InMemoryUserRepository implements IUserRepository {
   public users: User[] = [];
 
+  clear() {
+    this.users = [];
+  }
+
   async save(user: User): Promise<void> {
     this.users.push(user);
     return;
