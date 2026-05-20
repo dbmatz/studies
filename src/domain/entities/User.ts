@@ -15,7 +15,11 @@ export class User {
     this.email = props.email;
     this.password = props.password;
   }
-  
+
+  getHashedPassword(): string {
+    return this.password;
+  }
+
   toJSON() {
     return {
       id: this.id,
