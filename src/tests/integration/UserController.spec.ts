@@ -47,4 +47,28 @@ describe("UserController", () => {
       })
       .expect(409);
   });
+
+  it("GET /user 200", async () => {
+    let id;
+    const userCreated = await supertest(app)
+      .post("/user")
+      .send({
+        name: "Beltrano Amaral",
+        email: "ciclano@email.com",
+        password: "password123",
+      })
+      .expect(201);
+
+    id = userCreated.body.data.id;
+
+    await supertest(app).get(`/user?id=${id}`).expect(200);
+  });
+
+  it("GET /user 404", async () => {
+    await supertest(app).get(`/user?id=666`).expect(404);
+  });
+
+  it("GET /user 400", async () => {
+    await supertest(app).get(`/user`).expect(400);
+  });
 });

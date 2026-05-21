@@ -1,4 +1,5 @@
 import { CreateUserUseCase } from "../../../application/use-cases/CreateUserUseCase";
+import { GetUserByIDUseCase } from "../../../application/use-cases/GetUserByIDUseCase";
 import { InMemoryUserRepository } from "../../repositories/InMemoryUserRepository";
 import { BcryptHashService } from "../../services/BcryptHashService";
 import { UserController } from "../controllers/UserController";
@@ -10,4 +11,9 @@ const createUserUseCase = new CreateUserUseCase(
   bcryptHashService,
 );
 
-export const userController = new UserController(createUserUseCase);
+const getUserByIDUseCase = new GetUserByIDUseCase(inMemoryUserRepository);
+
+export const userController = new UserController(
+  createUserUseCase,
+  getUserByIDUseCase,
+);

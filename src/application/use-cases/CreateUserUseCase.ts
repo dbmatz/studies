@@ -23,9 +23,6 @@ export class CreateUserUseCase implements ICreateUserUseCase {
 
   async execute(dto: CreateUserInput): Promise<UserDTO> {
     const { email, name, password } = dto;
-    if (!email || !name || !password) {
-      throw new BadRequestError("Please provide the required information.");
-    }
     const uniqueEmail = await this.userRepository.findByEmail(email);
     if (uniqueEmail) {
       throw new ConflictError("Email is already in use.");
