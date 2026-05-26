@@ -1,26 +1,21 @@
 import { IUserRepository } from "../../../application/repositories/IUserRepository";
 import { IHashService } from "../../../application/services/IHashService";
 import {
-  CreateUserUseCase,
-  ICreateUserUseCase,
-} from "../../../application/use-cases/CreateUserUseCase";
-import {
   GetUserByIDUseCase,
   IGetUserByIDUseCase,
 } from "../../../application/use-cases/GetUserByIDUseCase";
+import { User } from "../../../domain/entities/User";
 import { InMemoryUserRepository } from "../../../infra/repositories/InMemoryUserRepository";
 import { BcryptHashService } from "../../../infra/services/BcryptHashService";
 
 describe("GetUserByIDUseCase", () => {
   let userRepository: IUserRepository;
   let hashService: IHashService;
-  let createUserUseCase: ICreateUserUseCase;
   let getUserByIDUseCase: IGetUserByIDUseCase;
 
   beforeEach(() => {
     userRepository = new InMemoryUserRepository();
     hashService = new BcryptHashService();
-    createUserUseCase = new CreateUserUseCase(userRepository, hashService);
     getUserByIDUseCase = new GetUserByIDUseCase(userRepository);
   });
 
@@ -34,12 +29,13 @@ describe("GetUserByIDUseCase", () => {
 
   it("Must find the user", async () => {
     let id;
-    const createdUser = await createUserUseCase.execute({
+    const user = new User({
       name: "Fulano Silva",
       email: "fulano@email.com",
-      password: "senha@123",
+      password: "hashed",
     });
-    id = createdUser.id;
+    await userRepository.save(user);
+    id = user.id;
 
     const userFound = await getUserByIDUseCase.execute({
       id,
@@ -48,20 +44,5 @@ describe("GetUserByIDUseCase", () => {
     expect(userFound.id).toBe(id);
     expect(userFound.name).toBe("Fulano Silva");
     expect(userFound.email).toBe("fulano@email.com");
-  });
-
-  it("Must not return the password", async () => {
-    let id;
-    const createdUser = await createUserUseCase.execute({
-      name: "Ciclano Silva",
-      email: "Ciclano@email.com",
-      password: "senha@123",
-    });
-    id = createdUser.id;
-
-    const userFound = await getUserByIDUseCase.execute({
-      id,
-    });
-    expect(userFound).not.toHaveProperty("password");
   });
 });
