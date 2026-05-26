@@ -61,7 +61,11 @@ describe("UserController", () => {
 
     id = userCreated.body.data.id;
 
-    await supertest(app).get(`/user?id=${id}`).expect(200);
+    const userFound = await supertest(app).get(`/user?id=${id}`).expect(200);
+
+    expect(userFound.body.data).not.toHaveProperty("password");
+    expect(userFound.body.data.id).toBe(id);
+    expect(userFound.body.data.name).toBe("Beltrano Amaral");
   });
 
   it("GET /user 404", async () => {
